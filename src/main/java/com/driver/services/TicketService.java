@@ -47,12 +47,15 @@ public class TicketService {
 
 
         // Check Available Tickets
-        Optional<Train> trainOptional  =  trainRepository.findById(bookTicketEntryDto.getTrainId());
-        if(!trainOptional.isPresent()) throw new Exception("Invalid train!!");
 
-        Train train = trainOptional.get();
-        if(train.getNoOfSeats() <  bookTicketEntryDto.getNoOfSeats()){
-            throw new Exception("No value present");
+        Train train = trainRepository.findById(bookTicketEntryDto.getTrainId()).get();
+        int bookedTickets=0;
+        List<Ticket>booked = train.getBookedTickets();
+        for(Ticket ticket : booked ){
+            bookedTickets += ticket.getPassengersList().size();
+        }
+        if(bookedTickets + bookTicketEntryDto.getNoOfSeats() >  train.getNoOfSeats()){
+            throw new Exception("Less tickets are available");
         }
 
         // Check Valid Stations
