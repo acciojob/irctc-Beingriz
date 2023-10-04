@@ -20,8 +20,6 @@ public class PassengerService {
         passenger1.setName(passenger.getName());
         passenger1.setAge(passenger.getAge());
         passenger1.setBookedTickets(new ArrayList<>());
-
-
         // Saving Passenger
         Passenger savedPassenger = passengerRepository.save(passenger1);
         return savedPassenger.getPassengerId();

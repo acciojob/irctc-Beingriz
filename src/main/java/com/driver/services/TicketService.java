@@ -46,9 +46,10 @@ public class TicketService {
        //And the end return the ticketId that has come from db
 
 
-
         // Check Available Tickets
         Optional<Train> trainOptional  =  trainRepository.findById(bookTicketEntryDto.getTrainId());
+        if(!trainOptional.isPresent()) throw new Exception("Invalid train!!");
+
         Train train = trainOptional.get();
         if(train.getNoOfSeats() <  bookTicketEntryDto.getNoOfSeats()){
             throw new Exception("Less tickets are available");
@@ -56,35 +57,12 @@ public class TicketService {
 
         // Check Valid Stations
         String routs = train.getRoute();
-        String fromStation  = bookTicketEntryDto.getFromStation().toString();
-        String toStation  = bookTicketEntryDto.getToStation().toString();
-
-        String[]  stationList =  routs.split(",");
-        boolean fromStationFound = false;
-        boolean toStationFound = false;
-        boolean isValid = false;
-        int fromindex =0, toindex = 0;
-        for (String station : stationList ) {
-            if(station.equals(fromStation)){
-               fromStationFound  = true;
-               fromindex++;
-            }
-            if(station.equals(toStation)){
-               toStationFound  = true;
-               toindex++;
-            }
-
-            if(fromStationFound && toStationFound){
-                isValid = true;
-
-            }
+        int fare = 0;
+        try {
+            fare =  getFare(bookTicketEntryDto,routs);
+        }catch (Exception e){
+            throw new Exception(e.getMessage());
         }
-        if(!isValid){
-            throw new Exception("Invalid stations");
-        }
-
-        // Caclculate Fare
-        int fare =  ((stationList.length -(fromindex-toindex)-1)*300);
 
         // Creating Ticket
         Ticket newTicket = new Ticket();
@@ -106,9 +84,41 @@ public class TicketService {
         Ticket savedTicket = ticketRepository.save(newTicket); // Ticket Created
 
         train.getBookedTickets().add(savedTicket); // Adding Ticket in Train
+        train.setNoOfSeats(train.getNoOfSeats()-passengerIds.size());
         Train savedTrain = trainRepository.save(train); // Saved Train with Tice
 
        return savedTicket.getTicketId();
 
+    }
+    public  int getFare(BookTicketEntryDto bookTicketEntryDto, String routs ) throws Exception{
+        String fromStation  = bookTicketEntryDto.getFromStation().toString();
+        String toStation  = bookTicketEntryDto.getToStation().toString();
+
+        String[] stationList =  routs.split(",");
+        boolean fromStationFound = false;
+        boolean toStationFound = false;
+        boolean isValid = false;
+        int fromindex =0, toindex = 0;
+        for (String station : stationList ) {
+            if(station.equals(fromStation)){
+                fromStationFound  = true;
+                fromindex++;
+            }
+            if(station.equals(toStation)){
+                toStationFound  = true;
+                toindex++;
+            }
+
+            if(fromStationFound && toStationFound){
+                isValid = true;
+
+            }
+        }
+        if(!isValid){
+            throw new Exception("Invalid stations");
+        }
+
+        // Caclculate Fare
+        return ((stationList.length -(fromindex-toindex)-1)*300);
     }
 }
