@@ -132,10 +132,11 @@ public class TrainService {
         for (Train train: trains ) {
            String[] stations =  train.getRoute().split(",");
            for (String st : stations){
-               if (st.equals(station.toString()) &&
-                       (train.getDepartureTime().equals(startTime) ||
+               if (st.equals(station.toString()) )
+                      if( (train.getDepartureTime().equals(startTime) ||
                                (train.getDepartureTime().isAfter(startTime) && train.getDepartureTime().isBefore(endTime)))) {
                    trainId.add(train.getTrainId());
+                   break;
                }
            }
         }
