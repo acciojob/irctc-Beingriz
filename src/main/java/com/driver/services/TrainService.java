@@ -131,13 +131,20 @@ public class TrainService {
         List<Train> trains  =  trainRepository.findAll();
         for (Train train: trains ) {
            String[] stations =  train.getRoute().split(",");
+           int i=0;
            for (String st : stations){
-               if (st.equals(station.toString()) )
-                      if( (train.getDepartureTime().equals(startTime) ||
-                               (train.getDepartureTime().isAfter(startTime) && train.getDepartureTime().isBefore(endTime)) || train.getDepartureTime().equals(endTime))) {
-                   trainId.add(train.getTrainId());
-                   break;
+               if (st.equals(station.toString()) ){
+                   int startTimeInMin = (startTime.getHour() * 60) + startTime.getMinute();
+                   int lastTimeInMin = (endTime.getHour() * 60) + endTime.getMinute();
+
+
+                   int departureTimeInMin = (train.getDepartureTime().getHour() * 60) + train.getDepartureTime().getMinute();
+                   int reachingTimeInMin  = departureTimeInMin + (i * 60);
+                   if(reachingTimeInMin >= startTimeInMin && reachingTimeInMin <= lastTimeInMin){
+                       trainId.add(train.getTrainId());
+                   }
                }
+               i++;
            }
         }
         return trainId;
