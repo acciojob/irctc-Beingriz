@@ -52,7 +52,7 @@ public class TicketService {
 
         Train train = trainOptional.get();
         if(train.getNoOfSeats() <  bookTicketEntryDto.getNoOfSeats()){
-            throw new Exception("Less tickets are available");
+            throw new Exception("No value present");
         }
 
         // Check Valid Stations

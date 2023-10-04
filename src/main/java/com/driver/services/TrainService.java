@@ -134,7 +134,7 @@ public class TrainService {
            for (String st : stations){
                if (st.equals(station.toString()) )
                       if( (train.getDepartureTime().equals(startTime) ||
-                               (train.getDepartureTime().isAfter(startTime) && train.getDepartureTime().isBefore(endTime)))) {
+                               (train.getDepartureTime().isAfter(startTime) && train.getDepartureTime().isBefore(endTime)) || train.getDepartureTime().equals(endTime))) {
                    trainId.add(train.getTrainId());
                    break;
                }
