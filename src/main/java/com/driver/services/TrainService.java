@@ -82,7 +82,6 @@ public class TrainService {
         for (String st : stationList ) {
             if(st.equals(station.toString())){
                 StationFound  = true;
-                break;
             }
 
         }
@@ -128,8 +127,19 @@ public class TrainService {
         //You can assume that the date change doesn't need to be done ie the travel will certainly happen with the same date (More details
         //in problem statement)
         //You can also assume the seconds and milli seconds value will be 0 in a LocalTime format.
-
-        return null;
+        List<Integer> trainId = new ArrayList<>();
+        List<Train> trains  =  trainRepository.findAll();
+        for (Train train: trains ) {
+           String[] stations =  train.getRoute().split(",");
+           for (String st : stations){
+               if (st.equals(station.toString()) &&
+                       (train.getDepartureTime().equals(startTime) ||
+                               (train.getDepartureTime().isAfter(startTime) && train.getDepartureTime().isBefore(endTime)))) {
+                   trainId.add(train.getTrainId());
+               }
+           }
+        }
+        return trainId;
     }
 
 }

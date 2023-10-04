@@ -84,7 +84,7 @@ public class TicketService {
         Ticket savedTicket = ticketRepository.save(newTicket); // Ticket Created
 
         train.getBookedTickets().add(savedTicket); // Adding Ticket in Train
-        train.setNoOfSeats(train.getNoOfSeats()-passengerIds.size());
+        train.setNoOfSeats(train.getNoOfSeats()-bookTicketEntryDto.getNoOfSeats());
         Train savedTrain = trainRepository.save(train); // Saved Train with Tice
 
        return savedTicket.getTicketId();
